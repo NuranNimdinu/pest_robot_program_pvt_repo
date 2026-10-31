@@ -171,6 +171,7 @@ class SerialComHandler(threading.Thread):
                 pkt = self._tx_queue.get_nowait()
                 self._serial_port.write(pkt)
                 self._serial_port.flush()
+                # print(pkt)
                 self._tx_queue.task_done()
 
             except queue.Empty:
@@ -179,6 +180,7 @@ class SerialComHandler(threading.Thread):
             if self._serial_port.in_waiting > 0:
                 rx_bytes = self._serial_port.readline()
                 rx_str = rx_bytes.decode('utf-8', 'ignore').rstrip()
+                # print(rx_str)
                 self.rx_queue.put_nowait(rx_str)
 
             time.sleep(0.01)
@@ -446,9 +448,9 @@ class RoverControllerWorker(threading.Thread):
         self.ack_recv = False
         return temp
     
-    def _get_wait_ack(self, timeout_ms = 1000):
-        timeout_in = (time.time() * 1000) + timeout_ms
-        while not self.ack_recv and timeout_in > time.time() * 1000:
+    def _get_wait_ack(self, timeout_s = 10000):
+        timeout_in = time.time() + timeout_s
+        while not self.ack_recv and timeout_in > time.time():
             self._handle_rx_msg()
             time.sleep(0.02)
 
@@ -573,16 +575,16 @@ class RoverPestTask():
             self.is_new_state = True
             self.current_step_point = 0
             self.current_cam_angle = 0
-            self.rover_worker._send_cmd_servo(self.SERVO_ANGLES[self.current_cam_angle])
-            self.rover_worker._get_wait_ack()
             self.rover_worker._send_cmd_zero_plat()
             self.rover_worker._get_wait_ack()
+            self.rover_worker._send_cmd_servo(self.SERVO_ANGLES[self.current_cam_angle])
+            self.rover_worker._get_wait_ack()
+
             self.change_state(self.FOLLOW_PATH)
 
         elif self.state == self.FOLLOW_PATH: ## follow line till check point met
             if self.is_new_state:
                 self.is_new_state = False
-                time.sleep(0.2)
                 self.rover_worker._send_cmd_follow_line()
                 self.rover_worker._get_wait_ack()
 
@@ -623,6 +625,7 @@ class RoverPestTask():
                     self.current_step_point = 0
                     self.rover_worker._send_cmd_stepper(self.STEPPER_POINTS[self.current_step_point], 40) ## reset platform to bottom
                     self.rover_worker._get_wait_ack()
+                    time.sleep(0.2)
                     
                 self.rover_worker.img_worker.start_scan() ## start scanning image
                 self.current_step_point = 1
