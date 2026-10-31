@@ -170,6 +170,7 @@ class SerialComHandler(threading.Thread):
             try:
                 pkt = self._tx_queue.get_nowait()
                 self._serial_port.write(pkt)
+                self._serial_port.flush()
                 self._tx_queue.task_done()
 
             except queue.Empty:
