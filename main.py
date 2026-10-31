@@ -559,13 +559,15 @@ class RoverPestTask():
     def reset_iteration(self):
         self.state = self.START_UP
         self.is_new_state = True
-        self.current_cam_angle = 0
         self.current_plant_count = 0
         self.current_plant_pest = 0
 
     def run_task(self):
         if self.state == self.START_UP:
             self.current_step_point = 0
+            self.current_cam_angle = 0
+            self.rover_worker._send_cmd_servo(self.SERVO_ANGLES[self.current_cam_angle])
+            self.rover_worker._get_wait_ack()
             self.rover_worker._send_cmd_zero_plat()
             self.rover_worker._get_wait_ack()
             self.change_state(self.FOLLOW_PATH)
