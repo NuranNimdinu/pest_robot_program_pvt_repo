@@ -391,6 +391,8 @@ class RoverControllerWorker(threading.Thread):
         else:
             global_data.is_task_running = False
             self.is_task_running = False
+
+            self.img_worker.stop_scan()
             ws_tx_str(json.dumps({"T":"STATUS", "DATA": "Task Stopping..."}))
             ws_tx_str(json.dumps({"T":"STATUS", "DATA": "Task Completed!"}))
             ws_tx_str(json.dumps({"T":"TER", "D": "Task Completed!"}))
