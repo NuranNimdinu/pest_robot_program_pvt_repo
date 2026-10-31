@@ -297,6 +297,7 @@ class RoverControllerWorker(threading.Thread):
         self._send_cmd_test_connection()
         self._get_wait_ack()
         ws_tx_str(json.dumps({"T":"TER", "D": "STM32 Connected"}))
+        rover_controller._send_cmd_buzzer(500)
 
         while not self._stop_worker.is_set():
             self._handle_rx_msg()
@@ -837,8 +838,6 @@ def restart_python_program():
 def check_app_ready():
     while not get_server_status():
         time.sleep(1)
-
-    rover_controller._send_cmd_buzzer(500)
 
 if __name__ == "__main__":
     time.sleep(0.5)
