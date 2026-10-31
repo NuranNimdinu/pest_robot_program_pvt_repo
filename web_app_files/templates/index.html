@@ -706,6 +706,7 @@
         
         let websocket = null;
         let isLiveFeedActive = false; 
+        let wasDisconnected = false;
         let latestSettingsData = null; 
         
         let lastReceivedCam = Date.now();
@@ -720,6 +721,10 @@
             loader.style.display = "inline-block"; 
 
             websocket.onopen = function () {
+                if (wasDisconnected) {
+                    window.location.reload(); // Refresh webpage on reconnect
+                    return;
+                }
                 ws_status.innerHTML = "ROVER ONLINE";
                 ws_status.style.color = "var(--border-color)";
                 loader.style.display = "none"; 
@@ -733,6 +738,7 @@
             };
 
             websocket.onclose = function () {
+                wasDisconnected = true; 
                 ws_status.innerHTML = "SIGNAL LOST";
                 ws_status.style.color = "var(--alert-color)";
                 loader.style.display = "inline-block";
