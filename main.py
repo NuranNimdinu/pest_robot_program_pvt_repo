@@ -564,6 +564,7 @@ class RoverPestTask():
 
     def run_task(self):
         if self.state == self.START_UP:
+            self.rover_worker.is_check_point = False
             self.current_step_point = 0
             self.current_cam_angle = 0
             self.rover_worker._send_cmd_servo(self.SERVO_ANGLES[self.current_cam_angle])
