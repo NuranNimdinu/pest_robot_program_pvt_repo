@@ -577,7 +577,6 @@ class RoverPestTask():
             self.rover_worker._get_wait_ack()
             self.rover_worker._send_cmd_zero_plat()
             self.rover_worker._get_wait_ack()
-            time.sleep(0.2)
             self.change_state(self.FOLLOW_PATH)
 
         elif self.state == self.FOLLOW_PATH: ## follow line till check point met
