@@ -233,7 +233,8 @@ class ImageProcessWorker(threading.Thread):
             ## send to the web app
             if self._ws_server.ws_camera_stream_on:
                 try:
-                    _, img_buf = cv2.imencode('.jpg', cam_frame)
+                    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 60]
+                    _, img_buf = cv2.imencode('.jpg', cam_frame, encode_param)
                     img_buf = base64.b64encode(img_buf)
                     img_buf = 'cam'.encode() + img_buf
                     self._ws_server.wss_camera_feed_q.put_nowait(img_buf)
