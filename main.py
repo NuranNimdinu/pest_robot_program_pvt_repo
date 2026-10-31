@@ -392,7 +392,7 @@ class RoverControllerWorker(threading.Thread):
             global_data.is_task_running = False
             self.is_task_running = False
 
-            self.img_worker.stop_scan()
+            self.task_manager.reset_iteration()
             ws_tx_str(json.dumps({"T":"STATUS", "DATA": "Task Stopping..."}))
             ws_tx_str(json.dumps({"T":"STATUS", "DATA": "Task Completed!"}))
             ws_tx_str(json.dumps({"T":"TER", "D": "Task Completed!"}))
@@ -561,16 +561,20 @@ class RoverPestTask():
         self.is_new_state = True
         self.current_plant_count = 0
         self.current_plant_pest = 0
+        self.rover_worker.img_worker.stop_scan() ## stop and accquire results
+        self.rover_worker._send_cmd_stop()
 
     def run_task(self):
         if self.state == self.START_UP:
             self.rover_worker.is_check_point = False
+            self.is_new_state = True
             self.current_step_point = 0
             self.current_cam_angle = 0
             self.rover_worker._send_cmd_servo(self.SERVO_ANGLES[self.current_cam_angle])
             self.rover_worker._get_wait_ack()
             self.rover_worker._send_cmd_zero_plat()
             self.rover_worker._get_wait_ack()
+            time.sleep(0.2)
             self.change_state(self.FOLLOW_PATH)
 
         elif self.state == self.FOLLOW_PATH: ## follow line till check point met
@@ -619,7 +623,7 @@ class RoverPestTask():
                     self.rover_worker._get_wait_ack()
                     
                 self.rover_worker.img_worker.start_scan() ## start scanning image
-                self.current_step_point = 1
+                self.current_step_point = 0
                 self.rover_worker._send_cmd_stepper(self.STEPPER_POINTS[self.current_step_point], global_settings["Scanning Speed (mm/s)"]) ## gradually move up platform
                 
             if self.rover_worker._get_serial_ack(): ## wait untill platform completely moved
