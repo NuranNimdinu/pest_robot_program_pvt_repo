@@ -31,6 +31,7 @@ global_settings = {
     "Line Detect Thres" : 500,
     "Line PID Kp" : 0.1,
     "Line PID Kd" : 0.05,
+    "Rover Servo Rate" : 40,
     "Checkpoint Adjustment (s)" : 0.5,
     "Scanning Speed (mm/s)" : 5,
     "Spraying Speed (mm/s)" : 10,
@@ -500,12 +501,13 @@ class RoverControllerWorker(threading.Thread):
         self._send_json_pkt({"cmd":"stop"})
 
     def _send_cmd_settings(self):
-        SETTINGS_STRUCT = '<h h h h h f f' ## 
+        SETTINGS_STRUCT = '<h h h h h h f f' ## 
 
         ws_tx_str(json.dumps({"T":"TER", "D": "Saving Settings"}))
 
         settings_bytes = struct.pack(SETTINGS_STRUCT, 
                                      int(global_settings["Obstacle Stop Distance (cm)"]), 
+                                     int(global_settings["Rover Servo Rate"]), 
                                      int(global_settings["Rover l Max Speed"]), 
                                      int(global_settings["Rover l Min Speed"]), 
                                      int(global_settings["Rover l Base Speed"]), 
