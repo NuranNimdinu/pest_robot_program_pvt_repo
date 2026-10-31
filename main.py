@@ -625,7 +625,7 @@ class RoverPestTask():
                     self.rover_worker._get_wait_ack()
                     
                 self.rover_worker.img_worker.start_scan() ## start scanning image
-                self.current_step_point = 0
+                self.current_step_point = 1
                 self.rover_worker._send_cmd_stepper(self.STEPPER_POINTS[self.current_step_point], global_settings["Scanning Speed (mm/s)"]) ## gradually move up platform
                 
             if self.rover_worker._get_serial_ack(): ## wait untill platform completely moved
