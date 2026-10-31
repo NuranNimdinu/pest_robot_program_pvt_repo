@@ -837,12 +837,13 @@ def check_app_ready():
     while not get_server_status():
         time.sleep(1)
 
+    rover_controller._send_cmd_buzzer(500)
 
 if __name__ == "__main__":
     time.sleep(0.5)
     
     ## looking for program updates at startup
-    # check_for_updates_and_restart() /////////// should setup
+    check_for_updates_and_restart() 
     print("Starting Pest Rover...")
 
     
