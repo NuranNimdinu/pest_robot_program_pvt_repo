@@ -505,7 +505,7 @@ class RoverControllerWorker(threading.Thread):
         ws_tx_str(json.dumps({"T":"TER", "D": "Saving Settings"}))
 
         settings_bytes = struct.pack(SETTINGS_STRUCT, 
-                                     int(global_settings["Obstacle Stop Distance"]), 
+                                     int(global_settings["Obstacle Stop Distance (cm)"]), 
                                      int(global_settings["Rover l Max Speed"]), 
                                      int(global_settings["Rover l Min Speed"]), 
                                      int(global_settings["Rover l Base Speed"]), 
@@ -617,7 +617,7 @@ class RoverPestTask():
                     
                 self.rover_worker.img_worker.start_scan() ## start scanning image
                 self.current_step_point = 1
-                self.rover_worker._send_cmd_stepper(self.STEPPER_POINTS[self.current_step_point], global_settings["Scanning Speed"]) ## gradually move up platform
+                self.rover_worker._send_cmd_stepper(self.STEPPER_POINTS[self.current_step_point], global_settings["Scanning Speed (mm/s)"]) ## gradually move up platform
                 
             if self.rover_worker._get_serial_ack(): ## wait untill platform completely moved
                 time.sleep(0.5) ## settle time
@@ -643,7 +643,7 @@ class RoverPestTask():
                     self.rover_worker._get_wait_ack()
 
                     self.current_step_point = 0
-                    self.rover_worker._send_cmd_stepper(self.STEPPER_POINTS[self.current_step_point], global_settings["Spraying Speed"]) ## gradually move platform to bottom
+                    self.rover_worker._send_cmd_stepper(self.STEPPER_POINTS[self.current_step_point], global_settings["Spraying Speed (mm/s)"]) ## gradually move platform to bottom
                
             if self.rover_worker._get_serial_ack(): ## wait untill platform completely moved
                 time.sleep(0.2) ## settle time
