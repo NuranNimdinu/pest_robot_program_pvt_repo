@@ -171,7 +171,7 @@ class SerialComHandler(threading.Thread):
                 pkt = self._tx_queue.get_nowait()
                 self._serial_port.write(pkt)
                 self._serial_port.flush()
-                # print(pkt)
+                print(pkt)
                 self._tx_queue.task_done()
 
             except queue.Empty:
@@ -328,12 +328,12 @@ class RoverControllerWorker(threading.Thread):
 
                 elif cmd == "TOGGLE_PUMP_1":
                     self.mannual_pump1 = not self.mannual_pump1
-                    self._send_cmd_pump(1, self.mannual_pump1)
+                    self._send_cmd_pump(1, 1 if self.mannual_pump1 else 0)
                     self._get_wait_ack()
                     
                 elif cmd == "TOGGLE_PUMP_2":
                     self.mannual_pump2 = not self.mannual_pump2
-                    self._send_cmd_pump(2, self.mannual_pump2)
+                    self._send_cmd_pump(2, 1 if self.mannual_pump2 else 0)
                     self._get_wait_ack()
 
                 elif cmd == "TEST_LINE_FOLLOW":
@@ -448,7 +448,7 @@ class RoverControllerWorker(threading.Thread):
         self.ack_recv = False
         return temp
     
-    def _get_wait_ack(self, timeout_s = 10000):
+    def _get_wait_ack(self, timeout_s = 20):
         timeout_in = time.time() + timeout_s
         while not self.ack_recv and timeout_in > time.time():
             self._handle_rx_msg()
