@@ -217,7 +217,8 @@ class ImageProcessWorker(threading.Thread):
 
             if self.is_scanning is True:
                 yolo_results = self.yolo_model.predict(cam_frame, imgsz=480, conf=global_settings["YOLO Model Conf"])
-                cam_frame = yolo_results[0].plot() # type: ignore
+                cam_frame = yolo_results[0].plot(conf=False, labels=True, boxes=True, line_width=2) # type: ignore
+
 
                 # 1. Vectorize class extraction (eliminates the slow Python 'for' loop)
                 if yolo_results[0].boxes: # type: ignore
