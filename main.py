@@ -13,6 +13,8 @@ import sys
 import subprocess
 import serial
 import struct
+from datetime import datetime
+from pathlib import Path
 
 import cv2
 from ultralytics import YOLO
@@ -42,6 +44,9 @@ global_settings = {
     "YOLO model Pest1 Value" : 1,
     "YOLO model Pest2 Value" : 2,
 }
+
+output_dir = Path("captured_images")
+output_dir.mkdir(parents=True, exist_ok=True)
 
 class SERVER_DATA_STRUCT:
     ws_client_connected = False
@@ -240,6 +245,11 @@ class ImageProcessWorker(threading.Thread):
                 try:
                     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 60]
                     _, img_buf = cv2.imencode('.jpg', cam_frame, encode_param)
+
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]
+                    file_path = output_dir / f"img_{timestamp}.jpg"
+                    img_buf.tofile(str(file_path))
+
                     img_buf = base64.b64encode(img_buf)
                     img_buf = 'cam'.encode() + img_buf
                     self._ws_server.wss_camera_feed_q.put_nowait(img_buf)
