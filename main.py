@@ -682,6 +682,7 @@ class RoverPestTask():
             if self.is_new_state:
                 self.is_new_state = False
 
+                self.current_cam_angle = 0
                 self.rover_worker._send_cmd_servo(self.SERVO_ANGLES[self.current_cam_angle])
                 self.rover_worker._get_wait_ack()
                 self.change_state(self.FOLLOW_PATH)
