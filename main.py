@@ -660,9 +660,9 @@ class RoverPestTask():
                     return
 
                 else:
-                    self.rover_worker._send_cmd_pump(1, (self.current_plant_pest in (1, 3)))
+                    self.rover_worker._send_cmd_pump(1, int(self.current_plant_pest in (1, 3)))
                     self.rover_worker._get_wait_ack()
-                    self.rover_worker._send_cmd_pump(2, (self.current_plant_pest in (2, 3)))
+                    self.rover_worker._send_cmd_pump(2, int(self.current_plant_pest in (2, 3)))
                     self.rover_worker._get_wait_ack()
 
                     self.current_step_point = 0
